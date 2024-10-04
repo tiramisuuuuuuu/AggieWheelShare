@@ -1,0 +1,42 @@
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40%;
+    min-width: 300px;
+    height: 100px;
+    background-color: plum;
+    color: green;
+    font-size: 2.5rem;
+    font-weight: bolder;
+    text-decoration: underline;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes transitionWidth {
+    from {width: 200px; opacity: 0.8;}
+    to {width: 100px; opacity: 1;}
+  }
+
+.stickyHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: none;
+    width: 100px;
+    height: 100px;
+    background-color: plum;
+    color: green;
+    font-size: 2.5rem;
+    font-weight: bolder;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    animation-name: transitionWidth;
+    animation-duration: 0.5s;
+}
