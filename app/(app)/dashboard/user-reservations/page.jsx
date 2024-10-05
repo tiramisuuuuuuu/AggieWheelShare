@@ -40,9 +40,10 @@ export default function Page() {
                 <div className={styles.list}>
                     {reservedBikeApps.map((app, index)=>{ return (
                         <div key={`donatePage-pendingapp${index}`} className={styles.item}>
-                            <img src={app.imageUri} width={150} height={150} />
+                            <img src={app.imageUri} width={150} height={150} className="object-contain" />
                             <text className={styles.itemText}>{app.description}</text>
-                            <text className={styles.itemText}>Pickup location: 
+                            <text className={styles.itemText}>
+                                <text>Pickup location: </text> 
                                 <text className="underline text-purple-500">{reservedBikes[index].location}</text>
                             </text>
                             <div className={styles.itemBttnDiv}>

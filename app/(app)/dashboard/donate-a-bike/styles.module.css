@@ -66,9 +66,12 @@
 
 .itemText {
     width: 150px;
-    padding-left: 10px;
-    padding-right: 10px;
+    height: 200px;
+    padding: 10px;
+    font-size: 1.5rem;
     color: grey;
+    overflow: auto;
+    word-wrap: break-word;
 }
 
 .itemBttnDiv {
