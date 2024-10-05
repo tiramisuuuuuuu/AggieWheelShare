@@ -1,6 +1,6 @@
 'use server';
 
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -14,106 +14,282 @@ const client = new MongoClient(uri, {
 
 export async function createBikeApplication(userToken, description, location, imageUri) {
     try {
-      // Connect to the "insertDB" database and access its "haiku" collection
       const database = client.db("AggieWheelShare");
       const collection = database.collection("BikeApplications");
       
-      // Create a document to insert
       const doc = {
         userToken: userToken,
         description: description,
         location: location,
         imageUri: imageUri,
+        completed: "false",
       }
-      // Insert the defined document into the "haiku" collection
       const result = await collection.insertOne(doc);
-      // Print the ID of the inserted document
       console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    } catch (err) {
+      console.error("Error connecting to MongoDB:", err);
     } finally {
-       // Close the MongoDB client connection
-      //await client.close();
+      return true;
     }
 }
 
+export async function findBikeApplications(userToken) {
+  let response = [];
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("BikeApplications");
+    const query = { userToken: userToken, completed: "false" };
+    const options = {};
+    const cursor = collection.find(query, options);
+    if ((await collection.countDocuments(query)) === 0) {
+      console.log("No documents found!");
+    }
+    for await (const doc of cursor) {
+      console.dir(doc);
+      let myObjectId = new ObjectId(doc._id);
+      let myObjectIdString = myObjectId.toString();
+      let temp = doc;
+      temp._id = myObjectIdString;
+      response.push(temp);
+    }
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    return response;
+  }
+}
+
+export async function findBikeApplicationById(id) {
+  let response = {};
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("BikeApplications");
+    var o_id = new ObjectId(id);
+    const query = { _id: o_id };
+    const options = {};
+    const cursor = collection.find(query, options);
+    if ((await collection.countDocuments(query)) === 0) {
+      console.log("No documents found!");
+    }
+    for await (const doc of cursor) {
+      console.log("Found document ", doc);
+      let myObjectId = new ObjectId(doc._id);
+      let myObjectIdString = myObjectId.toString();
+      response = doc;
+      response._id = myObjectIdString;
+    }
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    return response;
+  }
+}
+
 export async function insertBike(bikeApplicationId, location, locDescription, helperImageUri="", bikeLockCode) {
-    try {
-      // Connect to the "insertDB" database and access its "haiku" collection
+  let response = true;
+  try {
       const database = client.db("AggieWheelShare");
       const collection = database.collection("Bikes");
       
-      // Create a document to insert
       const doc = {
         bikeApplicationId: bikeApplicationId,
         location: location,
         locDescription: locDescription,
         helperImageUri: helperImageUri,
-        bikeLockCode: bikeLockCode
+        bikeLockCode: bikeLockCode,
+        reserved: "false",
       }
-      // Insert the defined document into the "haiku" collection
       const result = await collection.insertOne(doc);
-      // Print the ID of the inserted document
       console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    } catch (err) {
+      console.error("Error connecting to MongoDB:", err);
+      response = false;
     } finally {
-       // Close the MongoDB client connection
-      //await client.close();
+      return response;
     }
 }
 
+export async function closeBikeApplication(appId) {
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("BikeApplications");
+    var o_id = new ObjectId(appId);
+    const filter = { _id: o_id };
+    const options = { upsert: false };
+    const updateDoc = {
+      $set: {
+        completed: "true",
+      },
+    };
+    const result = await collection.updateOne(filter, updateDoc, options);
+    
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+    );
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally { return }
+}
+
+export async function getBikeAppIds() {
+  let response = {available: [], reserved: []};
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("Bikes");
+    
+    const cursor = collection.find();
+    if ((await collection.countDocuments()) === 0) {
+      console.log("No documents found!");
+    }
+    for await (const doc of cursor) {
+      console.dir(doc);
+      let bikeApplicationId = doc.bikeApplicationId;
+      if (doc.reserved == "false") {
+        response.available.push(bikeApplicationId);
+      } else {
+        response.reserved.push(bikeApplicationId);
+      }
+    }
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    return response;
+  }
+}
+
+export async function findBikes(userToken) {
+  let response = [];
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("Bikes");
+    const query = { reserved: userToken };
+    const options = {};
+    const cursor = collection.find(query, options);
+    if ((await collection.countDocuments(query)) === 0) {
+      console.log("No documents found!");
+    }
+    for await (const doc of cursor) {
+      console.dir(doc);
+      let myObjectId = new ObjectId(doc._id);
+      let myObjectIdString = myObjectId.toString();
+      let temp = doc;
+      temp._id = myObjectIdString;
+      response.push(temp);
+    }
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    return response;
+  }
+}
+
 export async function updateBike(bikeId, newLoc, locDescription, newImageUri="", bikeLockCode) {
+  let response = true;
     try {
       const database = client.db("AggieWheelShare");
       const collection = database.collection("Bikes");
-      // Create a filter for movies with the title "Random Harvest"
-      const filter = { _id: bikeId };
-      /* Set the upsert option to insert a document if no documents match
-      the filter */
+      var o_id = new ObjectId(bikeId);
+      const filter = { _id: o_id };
       const options = { upsert: false };
-      // Specify the update to set a value for the plot field
       const updateDoc = {
         $set: {
             location: newLoc,
             locDescription: locDescription,
             helperImageUri: newImageUri,
-            bikeLockCode: bikeLockCode
+            bikeLockCode: bikeLockCode,
+            reserved: "false",
         },
       };
-      // Update the first document that matches the filter
       const result = await collection.updateOne(filter, updateDoc, options);
       
-      // Print the number of matching and modified documents
       console.log(
         `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
       );
+    } catch (err) {
+      console.error("Error connecting to MongoDB:", err);
+      response = false;
     } finally {
-      // Close the connection after the operation completes
-      //await client.close();
+      return response;
     }
 }
 
-export async function reserveBike(userToken, bikeId) {
+export async function findBikeById(id) {
+  let response = {};
+  try {
+    const database = client.db("AggieWheelShare");
+    const collection = database.collection("Bikes");
+    var o_id = new ObjectId(id);
+    const query = { _id: o_id };
+    const options = {};
+    const cursor = collection.find(query, options);
+    if ((await collection.countDocuments(query)) === 0) {
+      console.log("No documents found!");
+    }
+    for await (const doc of cursor) {
+      console.log("Found document ", doc);
+      let myObjectId = new ObjectId(doc._id);
+      let myObjectIdString = myObjectId.toString();
+      response = doc;
+      response._id = myObjectIdString;
+    }
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  } finally {
+    return response;
+  }
+}
+
+export async function reserveBike(userToken, appId) {
+  let response = true;
     try {
       const database = client.db("AggieWheelShare");
       const collection = database.collection("Bikes");
-      // Create a filter for movies with the title "Random Harvest"
-      const filter = { _id: bikeId };
-      /* Set the upsert option to insert a document if no documents match
-      the filter */
+      const filter = { bikeApplicationId: appId, reserved: "false" };
       const options = { upsert: false };
-      // Specify the update to set a value for the plot field
       const updateDoc = {
         $set: {
-            reservedBy: userToken
+            reserved: userToken
         },
       };
-      // Update the first document that matches the filter
       const result = await collection.updateOne(filter, updateDoc, options);
       
-      // Print the number of matching and modified documents
       console.log(
         `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
       );
+
+      if (result.modifiedCount == 0) { response = false }
+    } catch (err) {
+      console.error("Error connecting to MongoDB:", err);
+      response = false;
     } finally {
-      // Close the connection after the operation completes
-      //await client.close();
+      return response;
+    }
+}
+
+export async function unreserveBike(bikeId) {
+  let response = true;
+    try {
+      const database = client.db("AggieWheelShare");
+      const collection = database.collection("Bikes");
+      var o_id = new ObjectId(bikeId);
+      const filter = { _id: o_id };
+      const options = { upsert: false };
+      const updateDoc = {
+        $set: {
+            reserved: "false"
+        },
+      };
+      const result = await collection.updateOne(filter, updateDoc, options);
+      
+      console.log(
+        `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+      );
+
+      if (result.modifiedCount == 0) { response = false }
+    } catch (err) {
+      console.error("Error connecting to MongoDB:", err);
+      response = false;
+    } finally {
+      return response;
     }
 }

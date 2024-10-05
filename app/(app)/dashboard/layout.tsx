@@ -1,5 +1,5 @@
 import Tabs from "@/app/ui/tabs";
-import styles from "./styles.module.css"
+import styles from "./layoutStyles.module.css"
 import Header from "@/app/ui/header";
 
 export default function Layout({children}) {

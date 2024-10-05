@@ -6,22 +6,24 @@ import { LoadingContext } from "@/app/lib/Context";
 import { FaRegCircle, FaRegCircleDot } from "react-icons/fa6";
 import { GiDutchBike } from "react-icons/gi";
 import { useRouter } from 'next/navigation';
-import { createBikeApplication } from "@/app/lib/mongoDB";
+import { insertBike, findBikeApplicationById, closeBikeApplication } from "@/app/lib/mongoDB";
 
 const locationsList = ["Silo", "Memorial Union", "Library"]
 
-export default function Home() {
+export default function Home({ params }: { params: { id: string } }) {
+    const [app, setApp] = useState({});
     const [loc, setLoc] = useState("");
     const [submitLoading, setSubmitLoading] = useState(false);
     const [error, setError] = useState([]);
-    const router = useRouter();
     const {loading, setLoading} = useContext(LoadingContext);
+    const router = useRouter()
 
     function submit_handler() {
         const description = document.getElementById("description_input").value;
         const imageUri = document.getElementById("imageUri_input").value;
+        const bikeLockCode = document.getElementById("bikeLockCode_input").value;
         let error = []
-        if (description=="" || loc=="") {
+        if (description=="" || loc=="" || bikeLockCode=="") {
             error.push("parameters")
             }
         setError(error);
@@ -40,8 +42,10 @@ export default function Home() {
         async function submit() {
             const description = document.getElementById("description_input").value;
             const imageUri = document.getElementById("imageUri_input").value;
-            const response = await createBikeApplication("bob", description, loc, imageUri);
+            const bikeLockCode = document.getElementById("bikeLockCode_input").value;
+            const response = await insertBike(app._id, loc, description, imageUri, bikeLockCode);
             if (response) {
+                await closeBikeApplication(app._id);
                 router.push("/dashboard/donate-a-bike");
                 }
             else {
@@ -49,23 +53,25 @@ export default function Home() {
                 }
         }
 
-        if (!submitLoading) { setLoading(false); }
-        else { submit(); }
+        if (submitLoading) { submit();}
     }, [submitLoading])
 
+    useEffect(()=>{
+        function updatePage(obj) {
+            setLoading(false);
+            setApp(obj)
+        }
+
+        async function initialize () {
+            updatePage(await findBikeApplicationById(params.id))
+        }
+        initialize();
+    }, [params.id])
     return (
         <div className={styles.page}>
             <div className={styles.form}>
                 <div className={styles.formElement}>
-                    <text>Upload bike image</text>
-                    <input id="imageUri_input" className={styles.imageUri} placeholder="Enter Bike Image Url"/>
-                </div>
-                <div className={styles.formElement}>
-                    <text>Bike description <text className="text-red-500">*</text></text>
-                    <textarea id="description_input" className={styles.description} placeholder="Describe appearance that can help users identify the bike!"/>
-                </div>
-                <div className={styles.formElement}>
-                    <text>Select a location to drop off bike + lock: <text className="text-red-500">*</text></text>
+                    <text>Confirm dropoff location or select a different one: <text className="text-red-500">*</text></text>
                     <div>
                         {locationsList.map((location, index)=>{return(
                             <button className={styles.listItem} key={`donationPage_loc${index}`} onClick={()=>{setLoc(location)}}>
@@ -74,20 +80,40 @@ export default function Home() {
                             </button> )})}
                     </div>
                 </div>
+                <div className={styles.formElement}>
+                    <text>Upload bike location image:</text>
+                    <input id="imageUri_input" className={styles.imageUri} placeholder="Enter Image Url"/>
+                </div>
+                <div className={styles.formElement}>
+                    <text>Location description <text className="text-red-500">*</text></text>
+                    <textarea id="description_input" className={styles.description} placeholder="Describe how to find bike"/>
+                </div>
+                <div className={styles.formElement}>
+                    <text>Please lock bike at location and enter lock code below: <text className="text-red-500">*</text></text>
+                    <input id="bikeLockCode_input" className={styles.imageUri} placeholder="Enter bike lock code"/>
+                </div>
                 <div className={styles.submitDiv}>
                     <button className={styles.submit} onClick={()=>{submit_handler()}}>
-                        Submit progress
+                        Submit
                         <GiDutchBike />
                     </button>
-                    <text className="text-gray-400 max-w-sm">Complete the remaining steps when you are ready to dropoff at the location!</text>
+                    <text className="text-gray-400 max-w-sm">Thank you for your donation!</text>
                 </div>
             </div>
 
+            <div className={styles.item}>
+                <img src={app.imageUri} width={250} height={250} />
+                <text className={styles.itemText}>{app.description}</text>
+                <text className={styles.itemText}>Selected dropoff location: 
+                    <text className="underline text-purple-500">{app.location}</text>
+                </text>
+            </div>
+            
             {error.includes("parameters") && <div className={styles.error}>Failed to submit: Missing 1 or more required parameters</div>}
             {error.includes("network") && <div className={styles.error}>Failed to submit: Network issue</div>}
 
             <div className={styles.headerDiv}>
-                <text className={styles.header}>Begin bike donation process:</text>
+                <text className={styles.header}>Dropoff and lock your bike within location radius to complete the donation process:</text>
             </div>
         </div>
     )

@@ -1,0 +1,19 @@
+.container {
+    background-color: white;
+    width: 100%;
+}
+
+.main {
+    padding-top: 100px;
+    width: 100%;
+}
+
+.body {
+    margin-left: 200px;
+}
+
+@media screen and (max-width: 800px) {
+    .body {
+        margin-left: 120px;
+    }
+}
