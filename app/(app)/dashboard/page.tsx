@@ -12,7 +12,7 @@ export default function Page() {
     const [reservedList, setReservedList] = useState([]);
     const [askConfirmation, setAskConfirmation] = useState(null);
     const router = useRouter();
-    const {loading, setLoading} = useContext(LoadingContext);
+    const {setLoading} = useContext(LoadingContext);
     const [error, setError] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
 

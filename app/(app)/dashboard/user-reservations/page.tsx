@@ -13,7 +13,7 @@ export default function Page() {
     const [openBikeProfile, setOpenBikeProfile] = useState(null);
 
     const router = useRouter()
-    const {loading, setLoading} = useContext(LoadingContext);
+    const {setLoading} = useContext(LoadingContext);
     
     useEffect(()=>{
         function updatePage(bike_arr, app_arr) {

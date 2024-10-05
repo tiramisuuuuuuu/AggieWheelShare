@@ -15,7 +15,7 @@ export default function Page() {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [error, setError] = useState([]);
     const router = useRouter();
-    const {loading, setLoading} = useContext(LoadingContext);
+    const {setLoading} = useContext(LoadingContext);
 
     function submit_handler() {
         const description = document.getElementById("description_input").value;

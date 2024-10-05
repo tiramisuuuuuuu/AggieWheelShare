@@ -10,7 +10,7 @@ import { findBikeApplications } from "@/app/lib/mongoDB";
 export default function Page() {
     const [pendingApplications, setPendingApplications] = useState([]);
     const router = useRouter()
-    const {loading, setLoading} = useContext(LoadingContext);
+    const {setLoading} = useContext(LoadingContext);
     
     useEffect(()=>{
         function updatePage(arr) {

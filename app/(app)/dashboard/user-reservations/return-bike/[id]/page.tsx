@@ -15,7 +15,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [loc, setLoc] = useState("");
     const [submitLoading, setSubmitLoading] = useState(false);
     const [error, setError] = useState([]);
-    const {loading, setLoading} = useContext(LoadingContext);
+    const {setLoading} = useContext(LoadingContext);
     const [showForm, setShowForm] = useState(true);
     const [didNotPickUp, setDidNotPickup] = useState(false);
     const router = useRouter()

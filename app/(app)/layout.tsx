@@ -11,7 +11,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
 
   return (
     <div className="w-screen h-screen">
-        <LoadingContext.Provider value={{loading, setLoading}}>
+        <LoadingContext.Provider value={{setLoading}}>
           {children}
         </LoadingContext.Provider>
         {loading && <div className="fixed top-0 w-screen h-screen bg-gray-500 bg-opacity-70 flex justify-center items-center text-2xl">
