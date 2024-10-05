@@ -6,7 +6,7 @@ import { LoadingContext } from '@/app/lib/Context'
 
 
 
-export default function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
+export default function RootLayout({children}) {
   const [loading, setLoading] = useState(true);
 
   return (
