@@ -10,7 +10,7 @@ import { updateBike, unreserveBike, findBikeById } from "@/app/lib/mongoDB";
 
 const locationsList = ["Silo", "Memorial Union", "Library"]
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({ params }) {
     const [bikeProfile, setBikeProfile] = useState({});
     const [loc, setLoc] = useState("");
     const [submitLoading, setSubmitLoading] = useState(false);
