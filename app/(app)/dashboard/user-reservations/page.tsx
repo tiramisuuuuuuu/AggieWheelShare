@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { LoadingContext } from "@/app/lib/Context";
 import { findBikes, findBikeApplicationById } from "@/app/lib/mongoDB";
 
-export default function Home() {
+export default function Page() {
     const [reservedBikes, setReservedBikes] = useState([]);
     const [reservedBikeApps, setReservedBikeApps] = useState([]);
     const [openBikeProfile, setOpenBikeProfile] = useState(null);

@@ -7,7 +7,7 @@ import { LoadingContext } from '@/app/lib/Context'
 
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   return (
     <div className="w-screen h-screen">

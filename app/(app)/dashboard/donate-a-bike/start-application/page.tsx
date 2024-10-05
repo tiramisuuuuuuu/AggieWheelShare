@@ -10,7 +10,7 @@ import { createBikeApplication } from "@/app/lib/mongoDB";
 
 const locationsList = ["Silo", "Memorial Union", "Library"]
 
-export default function Home() {
+export default function Page() {
     const [loc, setLoc] = useState("");
     const [submitLoading, setSubmitLoading] = useState(false);
     const [error, setError] = useState([]);

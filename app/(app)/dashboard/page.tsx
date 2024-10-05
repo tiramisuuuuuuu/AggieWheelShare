@@ -7,11 +7,11 @@ import { LoadingContext } from "@/app/lib/Context";
 import { getBikeAppIds, findBikeApplicationById, reserveBike } from "@/app/lib/mongoDB";
 import { IoMdClose } from "react-icons/io";
 
-export default function Home() {
+export default function Page() {
     const [availableList, setAvailableList] = useState([]);
     const [reservedList, setReservedList] = useState([]);
     const [askConfirmation, setAskConfirmation] = useState(null);
-    const router = useRouter()
+    const router = useRouter();
     const {loading, setLoading} = useContext(LoadingContext);
     const [error, setError] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);

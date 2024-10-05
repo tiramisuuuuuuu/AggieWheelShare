@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { LoadingContext } from "@/app/lib/Context";
 import { findBikeApplications } from "@/app/lib/mongoDB";
 
-export default function Home() {
+export default function Page() {
     const [pendingApplications, setPendingApplications] = useState([]);
     const router = useRouter()
     const {loading, setLoading} = useContext(LoadingContext);

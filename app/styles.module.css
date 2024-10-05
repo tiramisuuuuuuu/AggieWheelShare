@@ -1,0 +1,31 @@
+.page {
+    width: 100vw;
+    height: 100vh;
+    padding: 80px;
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+    text-decoration: underline;
+    font-weight: bolder;
+    font-size: 2rem;
+    color: purple;
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.bttn {
+    background-color: rgb(55, 159, 55);
+    border-radius: 20px;
+    color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

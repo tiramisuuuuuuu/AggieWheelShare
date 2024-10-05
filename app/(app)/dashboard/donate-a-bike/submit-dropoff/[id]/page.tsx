@@ -10,7 +10,7 @@ import { insertBike, findBikeApplicationById, closeBikeApplication } from "@/app
 
 const locationsList = ["Silo", "Memorial Union", "Library"]
 
-export default function Home({ params }: { params: { id: string } }) {
+export default function Page({ params }: { params: { id: string } }) {
     const [app, setApp] = useState({});
     const [loc, setLoc] = useState("");
     const [submitLoading, setSubmitLoading] = useState(false);
